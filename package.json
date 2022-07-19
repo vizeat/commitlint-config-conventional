@@ -1,15 +1,13 @@
 {
-  "name": "@vizeat/commitlint-config-conventional",
+  "name": "@eatwith/commitlint-config-conventional",
   "version": "1.0.0",
   "description": "Shareable commitlint config enforcing conventional commits",
   "files": [
     "index.js"
   ],
   "scripts": {
-    "test": "jest"
-  },
-  "publishConfig": {
-    "access": "public"
+    "test": "jest",
+    "pub": "yarn publish --registry https://registry.npmjs.com && git push --follow-tags"
   },
   "repository": {
     "type": "git",
