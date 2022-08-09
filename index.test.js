@@ -1,9 +1,9 @@
 import lint from '@commitlint/lint';
-import {rules, parserPreset} from '.';
+import {rules, parserPreset, ignores} from '.';
 
 const commitLint = async (message) => {
 	const preset = await require(parserPreset)();
-	return lint(message, rules, {...preset});
+	return lint(message, rules, {...preset, ignores });
 };
 
 const messages = {
@@ -27,6 +27,7 @@ const messages = {
 	warningBodyLeadingBlank: 'fix: some message\nbody',
 	invalidBodyMaxLineLength:
 		'fix: some message\n\nbody with multiple lines\nhas a message that is way too long and will break the line rule "line-max-length" by several characters',
+	invalidWipMessage: 'wip: some message',
 	validMessages: [
 		'fix: some message',
 		'fix(scope): some message',
@@ -34,6 +35,8 @@ const messages = {
 		'fix(scope): some message\n\nBREAKING CHANGE: it will be significant!',
 		'fix(scope): some message\n\nbody',
 		'fix(scope)!: some message\n\nbody',
+		'wip',
+		'WIP'
 	],
 };
 
@@ -193,12 +196,20 @@ test('body-max-line-length', async () => {
 	expect(result.errors).toEqual([errors.bodyMaxLineLength]);
 });
 
+test('invalid wip message', async () => {
+	const result = await commitLint(messages.invalidWipMessage);
+
+	expect(result.valid).toBe(false);
+	expect(result.errors).toEqual([errors.typeEnum]);
+});
+
 test('valid messages', async () => {
 	const validInputs = await Promise.all(
 		messages.validMessages.map((input) => commitLint(input))
 	);
 
 	validInputs.forEach((result) => {
+		console.log(result)
 		expect(result.valid).toBe(true);
 		expect(result.errors).toEqual([]);
 		expect(result.warnings).toEqual([]);
