@@ -33,6 +33,9 @@ module.exports = {
 			],
 		],
 	},
+	ignores: [
+		message => message.trim().toLowerCase() === 'wip'
+	],
 	prompt: {
 		questions: {
 			type: {
